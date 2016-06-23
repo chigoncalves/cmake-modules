@@ -10,9 +10,6 @@ Upon return it sets the following variables:
 SN_FOUND
   With a ``true`` value if it manages to find the library.
 
-SN_VERSION
-  With the version.
-
 SN_INCLUDE_DIRS
 
 SN_LIBRARIES
@@ -29,15 +26,13 @@ function (__sn_find_include_dir)
 
   if (SN_INCLUDE_DIR)
     set (SN_INCLUDE_DIR ${SN_INCLUDE_DIR} PARENT_SCOPE)
-  else ()
-    message (SEND_ERROR "Failed to find header..")
   endif ()
 endfunction ()
 
 function (__sn_find_library)
-  set (suffixes 1.0 1)
+  set (sn_suffixes 1.0 1)
   set (sn_names startup-notification)
-  foreach (suffix ${suffixes})
+  foreach (suffix ${sn_suffixes})
     list (APPEND sn_names startup-notification-${suffix})
   endforeach ()
 
@@ -50,10 +45,6 @@ function (__sn_find_library)
     set (SN_LIBRARY ${SN_LIBRARY} PARENT_SCOPE)
     set (SN_LIBRARY_RELEASE ${SN_LIBRARY_RELEASE} PARENT_SCOPE)
     set (SN_LIBRARY_DEBUG ${SN_LIBRARY_DEBUG} PARENT_SCOPE)
-    set (SN_LIBRARY_DIR ${SN_LIBRARY_DEBUG} PARENT_SCOPE)
-  else ()
-    message (SEND_ERROR "Failed to find lib.")
-  endif ()
 endfunction ()
 
 
@@ -65,38 +56,36 @@ set (SN_LIBRARIES)
 set (SN_VERSION 1.0)
 
 if (SN_FIND_COMPONENTS)
-  message (SEND_ERROR "Cannot find components..")
+  if (NOT SN_FIND_QUIETLY)
+    message (WARNING "FindSN: Requested a component, but LibSN does not"
+      " have any.")
+  endif ()
 endif ()
 
 if (SN_FIND_VERSION)
-  if (SN_FIND_VERSION_EXACT)
-    if (NOT SN_FIND_VERSION VERSION_EQUAL SN_VERSION)
-      message (SEND_ERROR "Failed to find requested version.")
-    endif ()
-  else ()
-    if (SN_FIND_VERSION VERSION_GREATER SN_VERSION)
-      message (SEND_ERROR "Failed inferior.")
-    endif ()
+  if (NOT SN_FIND_QUIETLY)
+    message (WARNING "FindSN: Requested `version' but none will be"
+      " inforced.")
   endif ()
 endif ()
 
 __sn_find_include_dir ()
 __sn_find_library ()
-set (SN_INCLUDE_DIRS ${SN_INCLUDE_DIR})
-set (SN_LIBRARIES ${SN_LIBRARY})
-
 
 select_library_configurations (SN
   FOUND_VAR SN_FOUND
-  REQUIRED_VARS SN_INCLUDE_DIRS SN_LIBRARIES
-  VERSION_VAR SN_VERSION
+  REQUIRED_VARS SN_INCLUDE_DIR SN_LIBRARY
 )
 
-# cmake_print_variables (
-#   SN_INCLUDE_DIRS
-#   SN_LIBRARIES
-#   SN_VERSION
-#   SN_LIBRARY_RELEASE
-#   SN_LIBRARY
-#   SN_LIBRARY_DEBUG
-# )
+if (SN_FOUND)
+  set (SN_INCLUDE_DIRS ${SN_INCLUDE_DIR})
+  set (SN_LIBRARIES ${SN_LIBRARY})
+endif ()
+
+mark_as_advanced (
+  SN_INCLUDE_DIRS
+  SN_INCLUDE_DIR
+  SN_LIBRARY
+  SN_LIBRARIES
+  SN_FOUND
+)
