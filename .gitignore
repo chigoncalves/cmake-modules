@@ -1,2 +1,3 @@
-module-test/
-cmake-notes/
+test/
+docs/
+*-old.cmake
