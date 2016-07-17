@@ -1,30 +1,29 @@
 #[[.rst
 
-FindStartupNotification
------------------------
+FindSN
+------
 
 Finds Startup Notification library.
 
-Upon return it sets the following variables:
+The following variables will be set when FindSN has finished done its
+job.
 
-SN_FOUND
-  With a ``true`` value if it manages to find the library.
+.. variable:: SN_FOUND
 
-SN_DEFINITIONS
+   With a *true* value if Startup Notification was found.
 
-SN_ROOT_DIR
+.. variable:: SN_INCLUDE_DIRS
 
-SN_VERSION_STRING
+.. variable:: SN_LIBRARIES
 
-SN_VERSION_MAJOR
+.. variable:: SN_DEFINITIONS
 
-SN_VERSION_MINOR
+   Will contain a list of compiler definitions.
 
-SN_VERSION_PATCH
+Variables tha provide hints
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. variable:: SN_ROOT_DIR
 
-SN_INCLUDE_DIRS
-
-SN_LIBRARIES
 #]]
 
 include (SelectLibraryConfigurations)
@@ -87,17 +86,11 @@ endfunction ()
 
 
 ##### Entry Point #####
+
 set (SN_FOUND)
 set (SN_INCLUDE_DIRS)
 set (SN_LIBRARIES)
 set (SN_DEFINITIONS)
-# StartupNotification does not export versions via macro, there no
-# way to find it, so we are setting it manually.
-set (SN_VERSION_MAJOR 1)
-set (SN_VERSION_MINOR 0)
-set (SN_VERSION_PATCH 0)
-set (SN_VERSION_STRING "${SN_VERSION_MAJOR}.${SN_VERSION_MINOR}.\
-${SN_VERSION_PATCH}")
 
 _sn_find_include_dir ()
 if (SN_INCLUDE_DIR)
@@ -135,14 +128,7 @@ if (NOT TARGET SN::Library)
 			 ${SN_LIBRARY_RELEASE})
 endif ()
 
-mark_as_advanced (SN_DEFINITIONS
-                  SN_VERSION_STRING
-		  SN_VERSION_MAJOR
-		  SN_VERSION_MINOR
-		  SN_VERSION_PATCH
-		  SN_FOUND
-		  SN_INCLUDE_DIRS
-		  SN_INCLUDE_DIR
-		  SN_LIBRARIES
+mark_as_advanced (SN_INCLUDE_DIR
+		  SN_LIBRARY_DIR
 		  SN_LIBRARY_RELEASE
 		  SN_LIBRARY)
