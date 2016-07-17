@@ -3,7 +3,7 @@
 FindStartupNotification
 -----------------------
 
-Finds Startup Notifaction library.
+Finds Startup Notification library.
 
 Upon return it sets the following variables:
 
