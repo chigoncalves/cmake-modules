@@ -5,41 +5,55 @@ FindCUnit
 
 This module finds the package CUnit.
 
-Usage to use it just issue the following command:
+Usage
+~~~~~
 
 .. code-block:: cmake
 
    find_package (CUnit)
 
-Upon ``find_package ()`` return the following variables will be set.
+If everything went fine **FindCUnit** will define the folowing
+variables.
 
-CUnit_FOUND
-  Will have a *true* value if this module manages to find CUnit.
+.. variable:: CUnit_FOUND
 
-CUnit_INCLUDE_DIRS
-  Will have a list of include directories.
+   Will set to *true* if CUnit was found in your system.
 
-CUnit_LIBRARIES
-  Will have a list of libraries needed by CUnit.
+.. variable:: CUnit_INCLUDE_DIRS
 
-CUnit_VERSION_STRING
-  Wil have the version of the library found.
+   Will be set with a list of include directories.
 
-CUnit_VERSION_MAJOR
+.. variable:: CUnit_LIBRARIES
 
-CUnit_VERSION_MINOR
+   Will set with a list of libraries to link you project to.
 
-CUnit_VERSION_PATCH
+.. variable:: CUnit_VERSION_STRING
+
+   Wil be set with CUnit full version.
+
+.. variable:: CUnit_VERSION_MAJOR
+
+   Will be set with CUnit major version.
+
+.. variable:: CUnit_VERSION_MINOR
+
+   Will be set with CUnit major version.
+
+.. variable:: CUnit_VERSION_PATCH
+
+   Will be set with CUnit patch version.
 
 Hints
 ~~~~~
-CUnit_ROOT_DIR
-  Use this variable to provide hints to find_*, you may pass it to
-  :command:`cmake` via -DCUnit_ROOT_DIR=<extra-path> or set the
-  environtment variable via: ``export CUnit_ROOT_DIR=<extra-path> or
+:envvar:`CUnit_ROOT_DIR`
+  Use this variable to provide hints to :filename:`find_{*}` commands,
+  you may pass it to :command:`cmake` via ``-DCUnit_ROOT_DIR=<extra-path>``
+  or set the environtment variable via:
 
-.. code::
+.. code-block:: cmake
 
+   % export CUnit_ROOT_DIR=<extra-path>
+   % # OR
    % CUnit_ROOT_DIR=<extra-path> cmake ../
 
 #]]
@@ -52,31 +66,28 @@ CUnit_ROOT_DIR
 #
 #=====================================================================
 
-Include (CMakePrintHelpers)
+
 include (SelectLibraryConfigurations)
 include (FindPackageHandleStandardArgs)
 
 set (CUnit_FOUND)
 set (CUnit_INCLUDE_DIRS)
 set (CUnit_LIBRARIES)
-
-if (CUnit_FIND_COMPONENTS)
-  message (SEND_ERROR "FindCUnit: This module does not have any "
-"components. Fix the invocation of `find_package ()'.")
-endif ()
+set (CUnit_VERSION_STRING)
+set (CUnit_VERSION_MAJOR)
+set (CUnit_VERSION_MINOR)
+set (CUnit_VERSION_PATCH)
 
 find_path (CUnit_INCLUDE_DIR
-  CUnit.h
+           CUnit.h
+	   HINTS
+	     "${CUnit_ROOT_DIR}"
+	     ENV CUnit_ROOT_DIR
+	   PATH_SUFFIXES CUnit cunit CUnit-2.0 cunit-2.0
+	   DOC "Include directory for CUnit.")
 
-  HINTS ${CUnit_ROOT_DIR}
-  ENV CUnit_ROOT_DIR
-  PATH_SUFFIXES CUnit cunit CUnit-2.0 cunit-2.0
-  DOC "Include directory for CUnit.")
-
-set (header_file "${CUnit_INCLUDE_DIR}/CUnit.h")
-file (STRINGS ${header_file} CUnit_VERSION_STRING REGEX
-      "#define[ \t]+CU_VERSION")
-unset (header_file)
+file (STRINGS "${CUnit_INCLUDE_DIR}/CUnit.h" CUnit_VERSION_STRING
+      REGEX "#define[ \t]+CU_VERSION")
 
 if (CUnit_VERSION_STRING)
   string (STRIP ${CUnit_VERSION_STRING} CUnit_VERSION_STRING)
@@ -85,9 +96,9 @@ if (CUnit_VERSION_STRING)
   string (REGEX REPLACE "-" "." CUnit_VERSION_STRING
           ${CUnit_VERSION_STRING})
 
-  string (REGEX REPLACE ".*CU_VERSION[ ]+([0-9]+).*$" "\\1"
+  string (REGEX REPLACE ".*CU_VERSION[ ]+([0-9]+).*" "\\1"
           CUnit_VERSION_MAJOR "${CUnit_VERSION_STRING}")
-  string (REGEX REPLACE ".*CU_VERSION[ ]+[0-9]+\\.([0-9]+).*$" "\\1"
+  string (REGEX REPLACE ".*CU_VERSION[ ]+[0-9]+\\.([0-9]+).*" "\\1"
           CUnit_VERSION_MINOR "${CUnit_VERSION_STRING}")
   string (REGEX REPLACE
           ".*CU_VERSION[ ]+[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
@@ -99,50 +110,46 @@ set (CUnit_VERSION_STRING
 ${CUnit_VERSION_PATCH}")
 
 find_library (CUnit_LIBRARY_RELEASE
-  cunit
-  PATHS /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
-  DOC "CUnit Release Library."
-)
+              cunit
+	      HINTS
+	        "${CUnit_ROOT_DIR}"
+		ENV CUnit_ROOT_DIR
+	      PATHS
+	        /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+	        /usr/lib64/${CMAKE_LIBRARY_ARCHITECTURE}
+	        /usr/lib32/${CMAKE_LIBRARY_ARCHITECTURE}
+	      DOC "CUnit Release Library.")
 
 select_library_configurations (CUnit)
 
-
-list (APPEND CUnit_INCLUDE_DIRS ${CUnit_INCLUDE_DIR})
-
 find_package_handle_standard_args (CUnit
-  FOUND_VAR CUnit_FOUND
-  REQUIRED_VARS CUnit_LIBRARIES CUnit_INCLUDE_DIRS
-  VERSION_VAR CUnit_VERSION
-)
+                                   REQUIRED_VARS
+				     CUnit_INCLUDE_DIR
+				     CUnit_LIBRARY
+				     CUnit_LIBRARY_RELEASE
+				     CUnit_LIBRARIES
+			           VERSION_VAR CUnit_VERSION)
 
-if (CUnit_FOUND AND NOT TARGET CUnit::LIBRARY)
-  add_library (CUnit::LIBRARY UNKNOWN IMPORTED)
-  set_property (TARGET CUnit::LIBRARY APPEND PROPERTY
-                IMPORTED_CONFIGURATIONS RELEASE)
+if (CUnit_FOUND AND NOT TARGET CUnit::Library)
+  add_library (CUnit::Library UNKNOWN IMPORTED)
+  set_property (TARGET CUnit::Library APPEND
+                PROPERTY
+                  IMPORTED_CONFIGURATIONS RELEASE)
 
-  set_target_properties (CUnit::LIBRARY
-    PROPERTIES
-      INTERFACE_LOCATION "${CUnit_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES "${CUnit_INCLUDE_DIR}")
+  set_target_properties (CUnit::Library
+                         PROPERTIES
+			   INTERFACE_LOCATION
+			     "${CUnit_LIBRARY}"
+                           IMPORTED_LOCATION_RELEASE
+       			     "${CUnit_LIBRARY_RELEASE}"
+   			   INTERFACE_INCLUDE_DIRECTORIES
+			     "${CUnit_INCLUDE_DIR}")
 
-  set_target_properties (CUnit::LIBRARY PROPERTIES
-                         IMPORTED_LOCATION_RELEASE
-			 ${CUnit_LIBRARY_RELEASE})
+  set (CUnit_INCLUDE_DIRS "${CUnit_INCLUDE_DIR}")
+  set (CUnit_LIBRARIES CUnit::Library)
 endif ()
 
-if (CUnit_FIND_VERSION AND CUnit_FIND_VERSION_EXACT)
-  if (NOT CUnit_VERSION VERSION_EQUAL CUnit_FIND_VERSION)
-    message (FATAL_ERROR "Requested version is greater than the one found")
-  endif ()
-endif ()
-
-
-mark_as_advanced (
-  CUnit_LIBRARIES
-  CUnit_LIBRARY
-  CUnit_LIBRARY_RELEASE
-  CUnit_LIBRARY_DEBUG
-  CUnit_INCLUDE_DIR
-  CUnit_INCLUDE_DIRS
-  CUnit_VERSION
-)
+mark_as_advanced (CUnit_LIBRARY
+		  CUnit_LIBRARY_RELEASE
+		  CUnit_LIBRARY_DEBUG
+		  CUnit_INCLUDE_DIR)
