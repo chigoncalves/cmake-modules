@@ -44,7 +44,15 @@ CUnit_ROOT_DIR
 
 #]]
 
-include (CMakePrintHelpers)
+
+#=====================================================================
+# Copyright 2016 chigoncalves <Edelcides Gonçalves>
+#
+# This file is not part of CMake
+#
+#=====================================================================
+
+Include (CMakePrintHelpers)
 include (SelectLibraryConfigurations)
 include (FindPackageHandleStandardArgs)
 

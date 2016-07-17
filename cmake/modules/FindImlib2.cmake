@@ -18,6 +18,14 @@ Imlib2_ROOT_DIR
 
 #]]
 
+#=====================================================================
+# Copyright 2016 chigoncalves <Edelcides Gonçalves>
+#
+# This file is not part of CMake
+#
+#=====================================================================
+
+
 include (SelectLibraryConfigurations)
 include (FindPackageHandleStandardArgs)
 
