@@ -48,7 +48,6 @@ function (_rsvg_find_component_library component_name component)
   set (_names glib rsvg gio gobject gdk-pixbuf gdk_pixbuf
                          cairo)
 
-
   set (_names_with_version)
   foreach (name ${_names})
     list (APPEND _names_with_version ${name}-2.0)
@@ -67,13 +66,10 @@ function (_rsvg_find_component_library component_name component)
          "${${component_name}_LIBRARY}" PARENT_SCOPE)
     set (${component_name}_LIBRARY_RELEASE
          "${${component_name}_LIBRARY_RELEASE}" PARENT_SCOPE)
-    set (${component_name}_LIBRARIES
-         "${${component_name}_LIBRARIES}" PARENT_SCOPE)
 
     mark_as_advanced (${component_name}_LIBRARY
                       ${component_name}_LIBRARY_RELEASE)
   endif ()
-
 endfunction ()
 
 function (_rsvg_get_library_name name)
@@ -84,15 +80,14 @@ function (_rsvg_get_library_name name)
                           LIBRARY_NAME
                           "${name}")
   endif ()
-  set (LIBRARY_NAME ${LIBRARY_NAME}::Library PARENT_SCOPE)
 
+  set (LIBRARY_NAME ${LIBRARY_NAME}::Library PARENT_SCOPE)
 endfunction ()
 
 function (_rsvg_add_library name)
   cmake_parse_arguments (_RSVG "" "" "DEPEND_ON" ${ARGN})
 
   _rsvg_get_library_name (${name})
-
   if (NOT TARGET ${LIBRARY_NAME})
     add_library (${LIBRARY_NAME} UNKNOWN IMPORTED)
     set_property (TARGET ${LIBRARY_NAME} APPEND
@@ -116,6 +111,7 @@ function (_rsvg_add_library name)
     endforeach ()
     set (RSVG_LIBRARIES "${RSVG_LIBRARIES};${_SELF}" PARENT_SCOPE)
   endif ()
+  unset (LIBRARY_NAME)
 endfunction ()
 
 function (_rsvg_library_remove_module_prefix NAME)
@@ -126,6 +122,25 @@ function (_rsvg_library_remove_module_prefix NAME)
   endif ()
   set (LIBRARY_NAME_SANS_PREFIX ${LIBRARY_NAME_SANS_PREFIX}
        PARENT_SCOPE)
+endfunction ()
+
+function (_rsvg_find_version HEADER_FILE MACRO_NAME)
+  file (STRINGS "${HEADER_FILE}" _VERSION
+        REGEX "#define[\t ]+${MACRO_NAME}[t\ ]+\\(?[0-9]+\\)?")
+
+  if (_VERSION)
+    string (REGEX REPLACE
+            ".*#define[\t ]+${MACRO_NAME}[t\ ]+.\\(?([0-9]+)\\)?.*"
+            "\\1" _VERSION_VALUE "${_VERSION}")
+    if ("${_VERSION}" STREQUAL "${_VERSION_VALUE}")
+      set (VERSION_FOUND 0 PARENT_SCOPE)
+    else ()
+      set (VERSION_FOUND 1 PARENT_SCOPE)
+      set (VERSION "${_VERSION_VALUE}" PARENT_SCOPE)
+    endif ()
+  else ()
+    set (VERSION_FOUND 0 PARENT_SCOPE)
+  endif ()
 endfunction ()
 
 #### Entry Point #####
@@ -166,7 +181,7 @@ foreach (LIBRARY ${_LIBRARIES})
     set (_LIBRARY_HEADER rsvg.h)
     set (_LIBRARY_DEPENDENCIES Glib_FOUND Gobject_FOUND
                                Cairo_FOUND GdkPixbuf_FOUND
-    			       GIO_FOUND MATH)
+    			       GIO_FOUND MATH_FOUND)
     set (_LIBRARY_NAME rsvg)
   endif ()
   _rsvg_find_component_include_dir (${LIBRARY} ${_LIBRARY_HEADER})
@@ -179,6 +194,31 @@ foreach (LIBRARY ${_LIBRARIES})
 				     ${LIBRARY}_LIBRARY_RELEASE
 				     ${LIBRARY_DEPENDENCIES})
 endforeach ()
+unset (LIBRARY_NAME_SANS_PREFIX)
+
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+                    "LIBRSVG_MAJOR_VERSION")
+if (VERSION_FOUND)
+  set (RSVG_VERSION_MAJOR ${VERSION})
+endif ()
+
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+                    "LIBRSVG_MINOR_VERSION")
+if (VERSION_FOUND)
+  set (RSVG_VERSION_MINOR ${VERSION})
+endif ()
+
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+                    "LIBRSVG_MICRO_VERSION")
+if (VERSION_FOUND)
+  set (RSVG_VERSION_PATCH ${VERSION})
+endif ()
+
+set (RSVG_VERSION_STRING "${RSVG_VERSION_MAJOR}.\
+${RSVG_VERSION_MINOR}.${RSVG_VERSION_PATCH}")
+
+cmake_print_variables (RSVG_VERSION_STRING)
+
 
 if (RSVG_FOUND)
   set (_libs RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
