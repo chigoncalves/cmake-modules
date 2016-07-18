@@ -43,6 +43,20 @@ Control VARS
 ~~~~~~~~~~~~
 :envvar:`Guile_ROOT_DIR`
 
+  Use this variable to provide hints to :filename:`find_{*}` commands,
+  you may pass it to :command:`cmake` or set the environtment variable.
+
+.. code-block:: cmake
+
+   % cmake . -Bbuild -DGuile_ROOT_DIR=<extra-path>
+
+   # or
+   % export Guile_ROOT_DIR=<extra-path>;
+   % cmake . -Bbuild
+
+   # or
+   % Guile_ROOT_DIR=<extra-path> cmake . -Bbuild
+
 
 #]]
 

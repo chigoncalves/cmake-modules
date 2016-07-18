@@ -46,15 +46,21 @@ variables.
 Hints
 ~~~~~
 :envvar:`CUnit_ROOT_DIR`
+
   Use this variable to provide hints to :filename:`find_{*}` commands,
-  you may pass it to :command:`cmake` via ``-DCUnit_ROOT_DIR=<extra-path>``
-  or set the environtment variable via:
+  you may pass it to :command:`cmake` or set the environtment variable.
 
 .. code-block:: cmake
 
-   % export CUnit_ROOT_DIR=<extra-path>
-   % # OR
-   % CUnit_ROOT_DIR=<extra-path> cmake ../
+   % cmake . -Bbuild -DCUnit_ROOT_DIR=<extra-path>
+
+   # or
+   % export CUnit_ROOT_DIR=<extra-path>;
+   % cmake . -Bbuild
+
+   # or
+   % CUnit_ROOT_DIR=<extra-path> cmake . -Bbuild
+
 
 #]]
 
