@@ -118,6 +118,16 @@ function (_rsvg_add_library name)
   endif ()
 endfunction ()
 
+function (_rsvg_library_remove_module_prefix NAME)
+  set (LIBRARY_NAME_SANS_PREFIX ${NAME})
+  string (REGEX MATCH "RSVG_" _MATCHED ${NAME})
+  if (_MATCHED)
+    string (REPLACE "RSVG_" "" LIBRARY_NAME_SANS_PREFIX ${NAME})
+  endif ()
+  set (LIBRARY_NAME_SANS_PREFIX ${LIBRARY_NAME_SANS_PREFIX}
+       PARENT_SCOPE)
+endfunction ()
+
 #### Entry Point #####
 
 set (RSVG_FOUND)
@@ -125,79 +135,50 @@ set (RSVG_INCLUDE_DIRS)
 set (RSVG_LIBRARIES)
 set (RSVG_VERSION_STRING)
 
-_rsvg_find_component_include_dir (RSVG_Cairo cairo.h)
-_rsvg_find_component_library (RSVG_Cairo cairo)
-find_package_handle_standard_args (Cairo
-                                   "FindRSVG: Failed to find \
-component Cairo."
-				   RSVG_Cairo_INCLUDE_DIR
-				   RSVG_Cairo_LIBRARY
-				   RSVG_Cairo_LIBRARY_RELEASE
-				   RSVG_Cairo_LIBRARIES)
-
-_rsvg_find_component_include_dir (RSVG_Glib glib.h)
-_rsvg_find_component_library (RSVG_Glib glib)
-find_package_handle_standard_args (Glib
-                                   "FindRSVG: Failed to find \
-component Glib."
-				   RSVG_Glib_INCLUDE_DIR
-				   RSVG_Glib_LIBRARY
-				   RSVG_Glib_LIBRARY_RELEASE
-				   RSVG_Glib_LIBRARIES)
-
-
-_rsvg_find_component_include_dir (RSVG_Gobject gobject.h)
-_rsvg_find_component_library (RSVG_Gobject gobject)
-find_package_handle_standard_args (Gobject
-                                   "FindRSVG: Failed to find \
-component Gobjet."
-				   RSVG_Gobject_INCLUDE_DIR
-				   RSVG_Gobject_LIBRARY
-				   RSVG_Gobject_LIBRARY_RELEASE
-				   RSVG_Gobject_LIBRARIES)
-
-_rsvg_find_component_include_dir (RSVG_GdkPixbuf gdk-pixbuf.h)
-_rsvg_find_component_library (RSVG_GdkPixbuf gdk-pixbuf)
-find_package_handle_standard_args (GdkPixbuf
-                                   "FindRSVG: Failed to find \
-component GdkPixbuf."
-				   RSVG_GdkPixbuf_INCLUDE_DIR
-				   RSVG_GdkPixbuf_LIBRARY
-				   RSVG_GdkPixbuf_LIBRARY_RELEASE
-				   RSVG_GdkPixbuf_LIBRARIES)
-
-_rsvg_find_component_include_dir (RSVG_GIO gio.h)
-_rsvg_find_component_library (RSVG_GIO gio)
-find_package_handle_standard_args (GIO
-                                   "FindRSVG: Failed to find \
-component GIO."
-				   RSVG_GIO_INCLUDE_DIR
-				   RSVG_GIO_LIBRARY
-				   RSVG_GIO_LIBRARY_RELEASE
-				   RSVG_GIO_LIBRARIES)
-
-_rsvg_find_component_include_dir (RSVG_Math math.h)
-_rsvg_find_component_library (RSVG_Math m)
-find_package_handle_standard_args (Math
-                                   "FindRSVG: Failed to find \
-component Math."
-				   RSVG_Math_INCLUDE_DIR
-				   RSVG_Math_LIBRARY
-				   RSVG_Math_LIBRARY_RELEASE
-				   RSVG_Math_LIBRARIES)
-
-_rsvg_find_component_include_dir (RSVG rsvg.h)
-_rsvg_find_component_library (RSVG rsvg)
-find_package_handle_standard_args (RSVG
-                                   "FindRSVG: Failed to find \
-component RSVG."
-				   RSVG_INCLUDE_DIR
-				   RSVG_LIBRARY
-				   RSVG_LIBRARY_RELEASE
-				   RSVG_LIBRARIES Cairo_FOUND
-				   Glib_FOUND Gobject_FOUND
-				   GdkPixbuf_FOUND GIO_FOUND
-				   MATH_FOUND)
+set (_LIBRARIES RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
+           RSVG_GIO RSVG_Math RSVG)
+foreach (LIBRARY ${_LIBRARIES})
+  if (${LIBRARY} STREQUAL RSVG_Cairo)
+    set (_LIBRARY_HEADER cairo.h)
+    set (_LIBRARY_DEPENDENCIES)
+    set (_LIBRARY_NAME cairo)
+  elseif (${LIBRARY} STREQUAL RSVG_Glib)
+    set (_LIBRARY_HEADER glib.h)
+    set (_LIBRARY_DEPENDENCIES)
+    set (_LIBRARY_NAME glib)
+  elseif (${LIBRARY} STREQUAL RSVG_Gobject)
+    set (_LIBRARY_HEADER gobject.h)
+    set (_LIBRARY_DEPENDENCIES Glib_FOUND)
+    set (_LIBRARY_NAME gobject)
+  elseif (${LIBRARY} STREQUAL RSVG_GdkPixbuf)
+    set (_LIBRARY_HEADER gdk-pixbuf.h)
+    set (_LIBRARY_NAME gdk-pixbuf)
+    set (_LIBRARY_DEPENDENCIES Glib_FOUND Gobject_FOUND)
+  elseif (${LIBRARY} STREQUAL RSVG_GIO)
+    set (_LIBRARY_HEADER gio.h)
+    set (_LIBRARY_DEPENDENCIES Glib_FOUND Gobject_FOUND)
+    set (_LIBRARY_NAME gio)
+  elseif (${LIBRARY} STREQUAL RSVG_Math)
+    set (_LIBRARY_HEADER math.h)
+    set (_LIBRARY_DEPENDENCIES)
+    set (_LIBRARY_NAME m)
+  elseif (${LIBRARY} STREQUAL RSVG)
+    set (_LIBRARY_HEADER rsvg.h)
+    set (_LIBRARY_DEPENDENCIES Glib_FOUND Gobject_FOUND
+                               Cairo_FOUND GdkPixbuf_FOUND
+    			       GIO_FOUND MATH)
+    set (_LIBRARY_NAME rsvg)
+  endif ()
+  _rsvg_find_component_include_dir (${LIBRARY} ${_LIBRARY_HEADER})
+  _rsvg_find_component_library (${LIBRARY} ${_LIBRARY_NAME})
+  _rsvg_library_remove_module_prefix (${LIBRARY})
+  find_package_handle_standard_args (${LIBRARY_NAME_SANS_PREFIX}
+                                     DEFAULT_MESSAGE
+				     ${LIBRARY}_INCLUDE_DIR
+				     ${LIBRARY}_LIBRARY
+				     ${LIBRARY}_LIBRARY_RELEASE
+				     ${LIBRARY_DEPENDENCIES})
+endforeach ()
 
 if (RSVG_FOUND)
   set (_libs RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
