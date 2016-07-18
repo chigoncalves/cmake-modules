@@ -9,26 +9,43 @@ Exported Vars
 
 .. variable:: Guile_FOUND
 
+   Set to *true* if Guile was found.
+
 .. variable:: Guile_INCLUDE_DIRS
+
+   A list of include directories.
 
 .. variable:: Guile_LIBRARIES
 
+   A list of libraries needed to build you project.
+
 .. variable:: Guile_VERSION_STRING
+
+   Guile full version.
 
 .. variable:: Guile_VERSION_MAJOR
 
+   Guile major version.
+
 .. variable:: Guile_VERSION_MINOR
+
+   Guile minor version.
 
 .. variable:: Guile_VERSION_PATCH
 
+   Guile patch version.
+
 .. variable:: Guile_EXECUTABLE
+
+   Guile executable (optional).
 
 Control VARS
 ~~~~~~~~~~~~
+:envvar:`Guile_ROOT_DIR`
 
-Guile_ROOT_DIR
 
 #]]
+
 
 #=====================================================================
 # Copyright 2016 chigoncalves <Edelcides Gonçalves>
@@ -37,31 +54,37 @@ Guile_ROOT_DIR
 #
 #=====================================================================
 
+
 include (SelectLibraryConfigurations)
 include (FindPackageHandleStandardArgs)
 
 function (_guile_find_component_include_dir component header)
   find_path ("${component}_INCLUDE_DIR"
              ${header}
-	     HINTS "${GUile_ROOT_DIR}" ENV Guile_ROOT_DIR
-	     PATH_SUFFIXES Guile guile Guile-2.0 guile-2.0 Guile/2.0
-	                   guile/2.0 GC gc)
+	     HINTS
+	       "${GUile_ROOT_DIR}"
+	       ENV Guile_ROOT_DIR
+	     PATH_SUFFIXES
+	       Guile guile Guile-2.0 guile-2.0 Guile/2.0 guile/2.0 GC
+	       gc)
 
   set ("${component}_INCLUDE_DIR" "${${component}_INCLUDE_DIR}"
        PARENT_SCOPE)
-
 endfunction ()
 
 function (_guile_find_component_library component_name component)
 
   find_library ("${component_name}_LIBRARY_RELEASE"
                 NAMES "${component}" "${component}-2.0"
-		PATHS  /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
-		       /usr/lib64/${CMAKE_LIBRARY_ARCHITECTURE}
-		       /usr/lib32/${CMAKE_LIBRARY_ARCHITECTURE})
+  	        HINTS
+	          "${GUile_ROOT_DIR}"
+ 		ENV Guile_ROOT_DIR
+		PATHS
+		  /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+		  /usr/lib64/${CMAKE_LIBRARY_ARCHITECTURE}
+		  /usr/lib32/${CMAKE_LIBRARY_ARCHITECTURE})
 
-  set (_component_library "${component_name}_LIBRARY_RELEASE")
-  if  (${_component_library})
+  if  (${component_name}_LIBRARY_RELEASE)
     select_library_configurations (${component_name})
     set ("${component_name}_LIBRARY_RELEASE"
          "${${component_name}_LIBRARY_RELEASE}" PARENT_SCOPE)
@@ -71,7 +94,6 @@ function (_guile_find_component_library component_name component)
          "${${component_name}_LIBRARIES}" PARENT_SCOPE)
   endif ()
 endfunction ()
-
 
 function (_guile_find_version_2 header_file macro_name)
   file (STRINGS "${header_file}" _VERSION
@@ -90,8 +112,6 @@ function (_guile_find_version_2 header_file macro_name)
   else ()
     set (_VERSION_FOUND 0 PARENT_SCOPE)
   endif ()
-
-  # cmake_print_variables (_VERSION)
 endfunction ()
 
 
@@ -109,7 +129,7 @@ set (Guile_EXECUTABLE)
 _guile_find_component_include_dir (Guile "libguile.h")
 if (Guile_INCLUDE_DIR)
   _guile_find_version_2 ("${Guile_INCLUDE_DIR}/libguile/version.h"
-                         "SCM_MAJOR_VERSION")
+                         SCM_MAJOR_VERSION)
    if (_VERSION_FOUND)
      set (Guile_VERSION_MAJOR "${_VERSION}")
    else ()
@@ -118,7 +138,7 @@ Guile_MAJOR_VERSION.")
    endif ()
 
   _guile_find_version_2 ("${Guile_INCLUDE_DIR}/libguile/version.h"
-                         "SCM_MINOR_VERSION")
+                         SCM_MINOR_VERSION)
    if (_VERSION_FOUND)
      set (Guile_VERSION_MINOR "${_VERSION}")
    else ()
@@ -127,7 +147,7 @@ Guile_MINOR_VERSION.")
    endif ()
 
   _guile_find_version_2 ("${Guile_INCLUDE_DIR}/libguile/version.h"
-                         "SCM_MICRO_VERSION")
+                         SCM_MICRO_VERSION)
    if (_VERSION_FOUND)
      set (Guile_VERSION_PATCH "${_VERSION}")
    else ()
@@ -136,11 +156,14 @@ Guile_MICRO_VERSION.")
    endif ()
    set (Guile_VERSION_STRING "${Guile_VERSION_MAJOR}.\
 ${Guile_VERSION_MINOR}.${Guile_VERSION_PATCH}")
+
+   unset (_VERSION_FOUND)
+   unset (_VERSION)
 endif ()
 
-_guile_find_component_include_dir (GC "gc.h")
+_guile_find_component_include_dir (Guile_GC "gc.h")
 _guile_find_component_library (Guile guile)
-_guile_find_component_library (GC gc)
+_guile_find_component_library (Guile_GC gc)
 
 find_program (Guile_EXECUTABLE
               guile
@@ -160,7 +183,6 @@ if (Guile_EXECUTABLE)
 
   string (REGEX REPLACE ".*\\(GNU Guile\\)[\t ]+[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
                         _guile_ver_patch "${_output}")
-
 
   set (_version "${_guile_ver_major}.${_guile_ver_minor}.\
 ${_guile_ver_patch}")
@@ -185,60 +207,64 @@ abnormally.")
   unset (_guile_ver_patch)
 endif ()
 
-find_package_handle_standard_args (GC
+find_package_handle_standard_args (Guile_GC
                                    "FindGuile: Failed to find \
 dependency GC."
-				   GC_INCLUDE_DIR GC_LIBRARY
-				   GC_LIBRARIES GC_LIBRARY_RELEASE)
+				   Guile_GC_INCLUDE_DIR
+				   Guile_GC_LIBRARY
+				   Guile_GC_LIBRARIES
+				   Guile_GC_LIBRARY_RELEASE)
 
 find_package_handle_standard_args (Guile
-				   REQUIRED_VARS Guile_INCLUDE_DIR
-				   Guile_LIBRARY Guile_VERSION_STRING
-				   Guile_LIBRARIES
-				   Guile_LIBRARY_RELEASE
-				   GC_LIBRARY GC_INCLUDE_DIR
-				   GC_INCLUDE_DIR GC_LIBRARIES
+				   REQUIRED_VARS
+				     Guile_INCLUDE_DIR
+				     Guile_LIBRARY
+				     Guile_LIBRARIES
+				     Guile_LIBRARY_RELEASE
+  				     Guile_GC_FOUND
 				   VERSION_VAR Guile_VERSION_STRING)
 if (Guile_FOUND)
   list (APPEND Guile_INCLUDE_DIRS "${Guile_INCLUDE_DIR}"
-        "${GC_INCLUDE_DIR}")
-  list (APPEND Guile_LIBRARIES "${GC_LIBRARY}")
+        "${Guile_GC_INCLUDE_DIR}")
+
   if (NOT TARGET Guile::Library AND NOT TARGET GC::Library)
+    add_library (Guile::GC::Library UNKNOWN IMPORTED)
+    set_property (TARGET Guile::GC::Library APPEND
+                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 
-    add_library (GC::Library UNKNOWN IMPORTED)
-    set_target_properties (GC::Library PROPERTIES
-                           INTERFACE_INCLUDE_DIRS "${GC_INCLUDE_DIR}")
-
-    set_property (TARGET GC::Library APPEND PROPERTY
-                  IMPORTED_CONFIGURATIONS RELEASE)
-
-    set_target_properties (GC::Library PROPERTIES
-                           IMPORTED_LOCATION_RELEASE
-			   "${GC_LIBRARY_RELEASE}"
-			   IMPORTED_LOCATION "${GC_LIBRARY}")
+    set_target_properties (Guile::GC::Library
+                           PROPERTIES
+                             INTERFACE_INCLUDE_DIRS
+			       "${Guile_GC_INCLUDE_DIR}"
+			     IMPORTED_LOCATION
+			        "${Guile_GC_LIBRARY}"
+                             IMPORTED_LOCATION_RELEASE
+    			       "${Guile_GC_LIBRARY_RELEASE}")
 
     add_library (Guile::Library UNKNOWN IMPORTED)
-    set_target_properties (Guile::Library PROPERTIES
-                           INTERFACE_INCLUDE_DIRS "${Guile_INCLUDE_DIR}")
+    set_property (TARGET Guile::Library APPEND
+                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    set_property (TARGET Guile::Library APPEND
+                  PROPERTY
+		    INTERFACE_LINK_LIBRARIES
+		      Guile::GC::Library)
 
-    set_property (TARGET Guile::Library APPEND PROPERTY
-                  IMPORTED_CONFIGURATIONS RELEASE)
+    set_target_properties (Guile::Library
+                           PROPERTIES
+                             INTERFACE_INCLUDE_DIRS
+			       "${Guile_INCLUDE_DIR}"
+			     IMPORTED_LOCATION "${Guile_LIBRARY}"
+                             IMPORTED_LOCATION_RELEASE
+  			       "${Guile_LIBRARY_RELEASE}")
 
-    set_property (TARGET Guile::Library APPEND PROPERTY
-                  INTERFACE_LINK_LIBRARIES GC::Library)
-
-    set_target_properties (Guile::Library PROPERTIES
-                           IMPORTED_LOCATION_RELEASE
-			   "${Guile_LIBRARY_RELEASE}"
-			   IMPORTED_LOCATION "${Guile_LIBRARY}")
+    set (Guile_LIBRARIES Guile::Library Guile::GC::Library)
   endif ()
 endif ()
 
-unset (_VERSION_FOUND)
-unset (_VERSION)
-
-mark_as_advanced (Guile_FOUND
-                  Guile_EXECUTABLE
-		  GC_INCLUDE_DIR
-		  GC_LIBRARY
-		  GC_LIBRARY_RELEASE)
+mark_as_advanced (Guile_EXECUTABLE
+		  Guile_INCLUDE_DIR
+		  Guile_LIBRARY
+		  Guile_LIBRARY_RELEASE
+		  Guile_GC_INCLUDE_DIR
+		  Guile_GC_LIBRARY
+		  Guile_GC_LIBRARY_RELEASE)
