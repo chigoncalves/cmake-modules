@@ -221,7 +221,7 @@ abnormally.")
   unset (_guile_ver_patch)
 endif ()
 
-find_package_handle_standard_args (Guile_GC
+find_package_handle_standard_args (GC
                                    "FindGuile: Failed to find \
 dependency GC."
 				   Guile_GC_INCLUDE_DIR
@@ -235,7 +235,7 @@ find_package_handle_standard_args (Guile
 				     Guile_LIBRARY
 				     Guile_LIBRARIES
 				     Guile_LIBRARY_RELEASE
-  				     Guile_GC_FOUND
+  				     GC_FOUND
 				   VERSION_VAR Guile_VERSION_STRING)
 if (Guile_FOUND)
   list (APPEND Guile_INCLUDE_DIRS "${Guile_INCLUDE_DIR}"

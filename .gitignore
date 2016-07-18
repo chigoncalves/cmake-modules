@@ -1,4 +1,3 @@
 test/
 docs/
 *-old.cmake
-FindRSVG.cmake
