@@ -158,15 +158,6 @@ component RSVG."
 				   MATH_FOUND)
 
 if (RSVG_FOUND)
-  list (APPEND RSVG_INCLUDE_DIRS "${RSVG_Cairo_INCLUDE_DIR}"
-                                 "${RSVG_Glib_INCLUDE_DIR}"
-				 "${RSVG_Gobject_INCLUDE_DIR}"
-				 "${RSVG_Gobject_INCLUDE_DIR}"
-				 "${RSVG_GdkPixbuf_INCLUDE_DIR}"
-				 "${RSVG_GIO_INCLUDE_DIR}"
-				 "${RSVG_MATH_INCLUDE_DIR}"
-				 "${RSVG_INCLUDE_DIR}")
-  list (REMOVE_DUPLICATES RSVG_INCLUDE_DIRS)
 
 
   if (NOT TARGET RSVG::Cairo::Library)
@@ -292,9 +283,12 @@ if (RSVG_FOUND)
   set (_libs RSVG_Math RSVG_GIO RSVG_GdkPixbuf RSVG_Gobject
              RSVG_Glib RSVG_Cairo)
   set (RSVG_LIBRARIES RSVG::Library)
+  list (APPEND RSVG_INCLUDE_DIRS "${RSVG_INCLUDE_DIR}")
   foreach (lib ${_libs})
+    list (APPEND RSVG_INCLUDE_DIRS "${${lib}_INCLUDE_DIR}")
     string (REGEX REPLACE "([a-zA-Z]+)_([a-zA-Z]+)" "\\1::\\2" lib
                           "${lib}")
     list (APPEND RSVG_LIBRARIES ${lib}::Library)
   endforeach ()
+  list (REMOVE_DUPLICATES RSVG_INCLUDE_DIRS)
 endif ()
