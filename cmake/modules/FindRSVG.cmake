@@ -76,6 +76,48 @@ function (_rsvg_find_component_library component_name component)
 
 endfunction ()
 
+function (_rsvg_get_library_name name)
+  set (LIBRARY_NAME ${name})
+  string (REGEX MATCH "_" _matched ${name})
+  if (_matched)
+    string (REGEX REPLACE "([a-zA-Z]+)_([a-zA-Z]+)" "\\1::\\2"
+                          LIBRARY_NAME
+                          "${name}")
+  endif ()
+  set (LIBRARY_NAME ${LIBRARY_NAME}::Library PARENT_SCOPE)
+
+endfunction ()
+
+function (_rsvg_add_library name)
+  cmake_parse_arguments (_RSVG "" "" "DEPEND_ON" ${ARGN})
+
+  _rsvg_get_library_name (${name})
+
+  if (NOT TARGET ${LIBRARY_NAME})
+    add_library (${LIBRARY_NAME} UNKNOWN IMPORTED)
+    set_property (TARGET ${LIBRARY_NAME} APPEND
+                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    set_target_properties (${LIBRARY_NAME}
+                           PROPERTIES
+			     INTERFACE_INCLUDE_DIRS
+			       "${${name}_INCLUDE_DIR}"
+			     IMPORTED_LOCATION
+			       "${${name}_LIBRARY}"
+			     IMPORTED_LOCATION_RELEASE
+			       "${${name}_LIBRARY_RELEASE}")
+
+    set (_SELF ${LIBRARY_NAME})
+    foreach (DEPENDENCY ${_RSVG_DEPEND_ON})
+      _rsvg_get_library_name (${DEPENDENCY})
+      set_property (TARGET ${_SELF} APPEND
+	            PROPERTY
+		    INTERFACE_LINK_LIBRARIES
+		      ${LIBRARY_NAME})
+    endforeach ()
+    set (RSVG_LIBRARIES "${RSVG_LIBRARIES};${_SELF}" PARENT_SCOPE)
+  endif ()
+endfunction ()
+
 #### Entry Point #####
 
 set (RSVG_FOUND)
@@ -158,137 +200,33 @@ component RSVG."
 				   MATH_FOUND)
 
 if (RSVG_FOUND)
-
-
-  if (NOT TARGET RSVG::Cairo::Library)
-    add_library (RSVG::Cairo::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::Cairo::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::Cairo::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_Cairo_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_Cairo_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_Cairo_LIBRARY_RELEASE}")
-  endif ()
-
-  if (NOT TARGET RSVG::Glib::Library)
-    add_library (RSVG::Glib::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::Glib::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::Glib::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_Glib_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_Glib_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_Glib_LIBRARY_RELEASE}")
-  endif ()
-
-  if (NOT TARGET RSVG::Gobject::Library)
-    add_library (RSVG::Gobject::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::Gobject::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::Gobject::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_Gobject_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_Gobject_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_Gobject_LIBRARY_RELEASE}"
-		             INTERFACE_LINKE_LIBRARIES
-			       RSVG::Glib::Library)
-  endif ()
-
-  if (NOT TARGET RSVG::GdkPixbuf::Library)
-    add_library (RSVG::GdkPixbuf::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::GdkPixbuf::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::GdkPixbuf::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_GdkPixbuf_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_GdkPixbuf_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_GdkPixbuf_LIBRARY_RELEASE}"
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Glib::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Gobject::Library)
-  endif ()
-
-  if (NOT TARGET RSVG::GIO::Library)
-    add_library (RSVG::GIO::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::GIO::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::GIO::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_GIO_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_GIO_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_GIO_LIBRARY_RELEASE}"
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Glib::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Gobject::Library)
-  endif ()
-
-  if (NOT TARGET RSVG::Math::Library)
-    add_library (RSVG::Math::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::Math::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::Math::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_Math_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_Math_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_Math_LIBRARY_RELEASE}")
-  endif ()
-
-  if (NOT TARGET RSVG::Library)
-    add_library (RSVG::Library UNKNOWN IMPORTED)
-    set_property (TARGET RSVG::Library APPEND
-                  PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties (RSVG::Library
-                           PROPERTIES
-			     INTERFACE_INCLUDE_DIRS
-			       "${RSVG_INCLUDE_DIR}"
-			     IMPORTED_LOCATION
-			       "${RSVG_LIBRARY}"
-			     IMPORTED_LOCATION_RELEASE
-			        "${RSVG_LIBRARY_RELEASE}"
-			     INTERFACE_LINK_LIBRARIES
-  			       RSVG::Cairo::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Glib::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Gobject::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::GdkPixbuf::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::GIO::Library
-			     INTERFACE_LINK_LIBRARIES
-			       RSVG::Math::Library)
-  endif ()
-
-  set (_libs RSVG_Math RSVG_GIO RSVG_GdkPixbuf RSVG_Gobject
-             RSVG_Glib RSVG_Cairo)
-  set (RSVG_LIBRARIES RSVG::Library)
-  list (APPEND RSVG_INCLUDE_DIRS "${RSVG_INCLUDE_DIR}")
+  set (_libs RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
+             RSVG_GIO RSVG_Math RSVG)
+  set (_lib_dependencies)
+  set (RSVG_LIBRARIES)
   foreach (lib ${_libs})
+    # Piggy backing on this loop.
     list (APPEND RSVG_INCLUDE_DIRS "${${lib}_INCLUDE_DIR}")
-    string (REGEX REPLACE "([a-zA-Z]+)_([a-zA-Z]+)" "\\1::\\2" lib
-                          "${lib}")
-    list (APPEND RSVG_LIBRARIES ${lib}::Library)
+
+    if (${lib} STREQUAL RSVG_Cairo)
+      set (_lib_dependencies)
+    elseif (${lib} STREQUAL RSVG_Glib)
+      set (_lib_dependencies)
+    elseif (${lib} STREQUAL RSVG_Gobject)
+      set (_lib_dependencies RSVG_Glib)
+    elseif (${lib} STREQUAL RSVG_GdkPixbuf)
+      set (_lib_dependencies RSVG_Glib RSVG_Gobject)
+    elseif (${lib} STREQUAL RSVG_GIO)
+      set (_lib_dependencies RSVG_Glib RSVG_Gobject)
+    elseif (${lib} STREQUAL RSVG_Math)
+      set (_lib_dependencies)
+    elseif (${lib} STREQUAL RSVG)
+      set (_lib_dependencies RSVG_Cairo RSVG_Glib RSVG_Gobject
+	                     RSVG_GdkPixbuf RSVG_GIO RSVG_Math)
+    endif ()
+
+    _rsvg_add_library (${lib} DEPEND_ON ${_lib_dependencies})
   endforeach ()
+
   list (REMOVE_DUPLICATES RSVG_INCLUDE_DIRS)
 endif ()
