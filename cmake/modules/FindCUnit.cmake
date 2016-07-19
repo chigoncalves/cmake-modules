@@ -134,7 +134,7 @@ find_package_handle_standard_args (CUnit
 				     CUnit_LIBRARY
 				     CUnit_LIBRARY_RELEASE
 				     CUnit_LIBRARIES
-			           VERSION_VAR CUnit_VERSION)
+			           VERSION_VAR CUnit_VERSION_STRING)
 
 if (CUnit_FOUND AND NOT TARGET CUnit::Library)
   add_library (CUnit::Library UNKNOWN IMPORTED)
