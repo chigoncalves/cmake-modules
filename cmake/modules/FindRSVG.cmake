@@ -228,32 +228,32 @@ find_package_handle_standard_args (RSVG
 				   VERSION_VAR RSVG_VERSION_STRING)
 
 if (RSVG_FOUND)
-  set (_libs RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
+  set (_LIBS RSVG_Cairo RSVG_Glib RSVG_Gobject RSVG_GdkPixbuf
              RSVG_GIO RSVG_Math RSVG)
-  set (_lib_dependencies)
+  set (_LIB_DEPENDENCIES)
   set (RSVG_LIBRARIES)
-  foreach (lib ${_libs})
+  foreach (LIB ${_LIBS})
     # Piggy backing on this loop.
-    list (APPEND RSVG_INCLUDE_DIRS "${${lib}_INCLUDE_DIR}")
+    list (APPEND RSVG_INCLUDE_DIRS "${${LIB}_INCLUDE_DIR}")
 
-    if (${lib} STREQUAL RSVG_Cairo)
-      set (_lib_dependencies)
-    elseif (${lib} STREQUAL RSVG_Glib)
-      set (_lib_dependencies)
-    elseif (${lib} STREQUAL RSVG_Gobject)
-      set (_lib_dependencies RSVG_Glib)
-    elseif (${lib} STREQUAL RSVG_GdkPixbuf)
-      set (_lib_dependencies RSVG_Glib RSVG_Gobject)
-    elseif (${lib} STREQUAL RSVG_GIO)
-      set (_lib_dependencies RSVG_Glib RSVG_Gobject)
-    elseif (${lib} STREQUAL RSVG_Math)
-      set (_lib_dependencies)
-    elseif (${lib} STREQUAL RSVG)
-      set (_lib_dependencies RSVG_Cairo RSVG_Glib RSVG_Gobject
+    if (${LIB} STREQUAL RSVG_Cairo)
+      set (_LIB_DEPENDENCIES)
+    elseif (${LIB} STREQUAL RSVG_Glib)
+      set (_LIB_DEPENDENCIES)
+    elseif (${LIB} STREQUAL RSVG_Gobject)
+      set (_LIB_DEPENDENCIES RSVG_Glib)
+    elseif (${LIB} STREQUAL RSVG_GdkPixbuf)
+      set (_LIB_DEPENDENCIES RSVG_Glib RSVG_Gobject)
+    elseif (${LIB} STREQUAL RSVG_GIO)
+      set (_LIB_DEPENDENCIES RSVG_Glib RSVG_Gobject)
+    elseif (${LIB} STREQUAL RSVG_Math)
+      set (_LIB_DEPENDENCIES)
+    elseif (${LIB} STREQUAL RSVG)
+      set (_LIB_DEPENDENCIES RSVG_Cairo RSVG_Glib RSVG_Gobject
 	                     RSVG_GdkPixbuf RSVG_GIO RSVG_Math)
     endif ()
 
-    _rsvg_add_library (${lib} DEPEND_ON ${_lib_dependencies})
+    _rsvg_add_library (${LIB} DEPEND_ON ${_LIB_DEPENDENCIES})
   endforeach ()
 
   list (REMOVE_DUPLICATES RSVG_INCLUDE_DIRS)
