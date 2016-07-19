@@ -1,78 +1,84 @@
-#.rst FindGTK3
-#
-# This module tries to find Gtk+3 package and its components.
-#
-# Usage
-#
-# .. code-block:: cmake
-#
-#    find_package (GTK3)
-#
-# FindGTK3 can find these Gtk+3 components:
-#
-# * gtk3
-#
-# * gdk3
-#
-# * pangocairo
-#
-# * pango
-#
-# * atk
-#
-# * cairogobject
-#
-# * cairo
-#
-# * gdkpixbuf
-#
-# * gio
-#
-# * gobject
-#
-# * glib
-#
-# Note that each component below has as dependent the component above.
-# For instance:
-#
-#  .. code-block:: cmake
-#
-#     find_package (GTK3 3.8 COMPONENTS gio)
-#
-# Will try to find only glib, gobject and gio, which means that the
-# invocation below has same effect as the former one.
-#
-# .. code-block:: cmake
-#
-#    find_package (GTK3 3.8 COMPONENTS gio glib gobject)
-#
-# Since ``gio`` depends on ``glib``, which in turn depends on ``gobject``,
-# there is no need to passing them to ``find_package``.
-#
-# If you want to find ``gtk3`` you don't need to pass all the components, i.e.
-# these to invocation of package are identical.
-#
-# .. code-block:: cmake
-#
-#    find_package (GTK3 3.8 COMPONENTS gtk3 gdk3 pangocairo pango atk
-#                                      cairogobject cairo gdkpixbuf
-#                                      gio gobject glib)
-#
-#    find_package (GTK3 3.8 COMPONENTS gtk3)
-#
-# As you can see the last invocation of ``find_package`` is more simple
-#
-# After a successful search this package sets these variables:
-#
-# GTK3_INCLUDE_DIRS
-#   With all include location for the components passed to ``find_package``.
-#
-# GTK3_LIBRARIES
-#   With all libraries of the components passed to ``find_package``.
-#
-# GTK3_DEFINITIONS
-#   With definitions passed to the compiler.
-#
+#[[.rst FindGtk3.cmake
+
+FindGtk3
+--------
+
+This module tries to find Gtk+3 package and its components.
+
+Usage
+^^^^^
+.. code::
+
+   find_package (Gtk3)
+
+FindGTK3 can find these Gtk+3 components:
+
+* Gtk3
+* Gdk3
+* PangoCairo
+* Pango
+* Atk
+* CairoGobject
+* Cairo
+* GdkPixbuf
+* GIO
+* Gobject
+* Glib
+
+Note that each component below has as dependent the component above.
+For instance:
+
+ .. code::
+
+    find_package (Gtk3 3.8 COMPONENTS GIO)
+
+Will try to find only Glib, Gobject and GIO, which means that the
+invocation below has same effect as the former one.
+
+.. code::
+
+    find_package (Gtk3 3.8 COMPONENTS GIO Glib Gobject)
+
+Since ``GIO`` depends on ``Glib``, which in turn depends on
+``Gobject``,
+ there is no need to passing them to :command:`find_package`\.
+
+If you want to find ``Gtk3`` you don't need to pass all the
+components, i.e. these to invocation of package are identical.
+
+.. code::
+
+   find_package (Gtk3 3.8 COMPONENTS Gtk3 Gdk3 PangoCairo Pango Atk
+                                      CairoGobject Cairo GdkPixbuf
+                                      GIO Gobject Glib)
+
+   find_package (Gtk3 3.8 COMPONENTS Gtk3)
+
+   # or even better.
+   find_package (Gtk3 3.8)
+
+
+As you can see the last invocation of :command:`find_package`
+is more simple.
+
+After a successful search this package sets these variables:
+
+.. variable:: Gtk3_FOUND
+
+   Will be set to *true* if it manages to find Gtk+3.
+
+.. variable:: Gtk3_INCLUDE_DIRS
+
+   With all include location for the components passed to
+   :command:``find_package``\.
+
+.. variable:: Gtk3_LIBRARIES
+
+   With all libraries of the components passed to
+:command:`find_package``\.
+
+
+#]]
 
 
 #=======================================================================
@@ -83,18 +89,8 @@
 
 
 # Ver a implentação no FindPkgConfig.cmake, CMakePackageConfigHelpers.cmake
-#
-#
-# I should export these variables.
-# GTK3_INCLUDE_DIRS with the value of GTK3_INCLUDE_DIR
-# GTK3_LIBRARY_DIRS with the value of GTK3_LIBRARY and its dependencies.
-#
-# Call the find_package_handle_standard_args() macro to set the
-# <name>_FOUND variable and print a success or failure message.
-
 
 include (SelectLibraryConfigurations)
-include (CMakePrintHelpers)
 include(FindPackageHandleStandardArgs)
 
 function (_gtk3_find_component_include_dir COMPONENT HEADER_FILE)
@@ -206,7 +202,7 @@ function (_gtk3_find_version HEADER_FILE MACRO_NAME)
 endfunction ()
 
 function (_gtk3_add_library NAME)
-  cmake_parse_arguments (__Gtk3 "" "" "DEPEND_ON" ${ARGN})
+  cmake_parse_arguments (_Gtk3 "" "" "DEPENDS_ON" ${ARGN})
 
   set (_LIBRARY_NAME ${NAME}::Library)
   if (NOT TARGET ${_LIBRARY_NAME})
@@ -223,7 +219,7 @@ function (_gtk3_add_library NAME)
 			       "${${NAME}_LIBRARY_RELEASE}")
 
     set (_SELF ${_LIBRARY_NAME})
-    foreach (DEPENDENCY ${__Gtk3_DEPEND_ON})
+    foreach (DEPENDENCY ${_Gtk3_DEPEND_ON})
       set (_LIBRARY_NAME ${DEPENDENCY}::Library)
       set_property (TARGET ${_SELF} APPEND
 	            PROPERTY
@@ -234,6 +230,7 @@ function (_gtk3_add_library NAME)
   endif ()
   unset (_LIBRARY_NAME)
 endfunction ()
+
 
 ############## Entry Point ###############
 
@@ -302,11 +299,8 @@ foreach (COMPONENT ${Gtk3_FIND_COMPONENTS})
     set (_DEPENDS_ON PangoCairo_FOUND)
  else ()
    continue ()
-   # set (_HEADER gtk/gtk.h)
-   #  set (_LIB_NAME gtk)
-   #  set (_LIB_VERSION 3 3.0)
-   #  set (_DEPENDS_ON Gdk_FOUND)
   endif ()
+
   _gtk3_find_component_include_dir (${COMPONENT}
                                     ${_HEADER})
   _gtk3_find_component_library (${COMPONENT}
@@ -340,8 +334,6 @@ if (_TOPMOST_COMPONENT STREQUAL Gtk3)
 
   set (Gtk3_VERSION_STRING "${Gtk3_VERSION_MAJOR}.\
 ${Gtk3_VERSION_MINOR}.${Gtk3_VERSION_PATCH}")
-
-  cmake_print_variables (Gtk3_VERSION_STRING)
 
   find_package_handle_standard_args (Gtk3
                                      REQUIRED_VARS
@@ -381,7 +373,7 @@ foreach (COMPONENT ${Gtk3_FIND_COMPONENTS})
                            Pango PangoCairo Gdk3)
   endif ()
 
-  _gtk3_add_library (${COMPONENT} DEPEND_ON ${_LIB_DEPENDENCIES})
+  _gtk3_add_library (${COMPONENT} DEPENDS_ON ${_LIB_DEPENDENCIES})
 endforeach ()
 
 if (Gtk3_INCLUDE_DIRS)
