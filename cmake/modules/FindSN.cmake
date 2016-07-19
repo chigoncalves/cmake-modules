@@ -45,12 +45,14 @@ Variables tha provide hints
 
 #]]
 
+
 #=====================================================================
 # Copyright 2016 chigoncalves <Edelcides Gonçalves>
 #
-# This file is not part of CMake
+# This file is not part of CMake.
 #
 #=====================================================================
+
 
 include (SelectLibraryConfigurations)
 include (FindPackageHandleStandardArgs)
@@ -66,9 +68,7 @@ function (_sn_find_include_dir)
    	       startup-notification-1
                startup-notification-1.0)
 
-  if (SN_INCLUDE_DIR)
     set (SN_INCLUDE_DIR "${SN_INCLUDE_DIR}" PARENT_SCOPE)
-  endif ()
 endfunction ()
 
 function (_sn_find_definitions)
@@ -77,14 +77,14 @@ function (_sn_find_definitions)
           "(#ifndef|#ifdef)[\t ]+[a-bA-Z0-9_-]+")
 
     set (SN_DEFINITIONS)
-    foreach (definition ${_RESULTS})
-      string (REPLACE "#ifndef" "" definition "${definition}")
-      string (REPLACE "#ifdef" "" definition "${definition}")
-      string (STRIP "${definition}" definition)
-      string (REGEX MATCH "^_+|_+$" matched "${definition}")
+    foreach (DEFINITION ${_RESULTS})
+      string (REPLACE "#ifndef" "" DEFINITION "${DEFINITION}")
+      string (REPLACE "#ifdef" "" DEFINITION "${DEFINITION}")
+      string (STRIP "${DEFINITION}" DEFINITION)
+      string (REGEX MATCH "^_+|_+$" _MATCHED "${DEFINITION}")
 
-      if (NOT matched)
-	list (APPEND SN_DEFINITIONS "-D${definition}=1")
+      if (NOT _MATCHED)
+	list (APPEND SN_DEFINITIONS "-D${DEFINITION}=1")
       endif ()
     endforeach ()
     string (REPLACE ";" " " SN_DEFINITIONS "${SN_DEFINITIONS}")
@@ -94,14 +94,14 @@ function (_sn_find_definitions)
 endfunction ()
 
 function (_sn_find_library)
-  set (suffixes 1.0 1)
-  set (sn_names startup-notification)
-  foreach (suffix ${suffixes})
-    list (APPEND sn_names startup-notification-${suffix})
+  set (_SUFFIXES 1.0 1)
+  set (_SN_NAMES startup-notification)
+  foreach (SUFFIX ${_SUFFIXES})
+    list (APPEND _SN_NAMES startup-notification-${SUFFIX})
   endforeach ()
 
   find_library (SN_LIBRARY_RELEASE
-                ${sn_names}
+                ${_SN_NAMES}
 		HINT
 		  "${SN_ROOT_DIR}"
 		  ENV SN_ROOT_DIR
