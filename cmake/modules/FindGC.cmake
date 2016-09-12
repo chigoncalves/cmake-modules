@@ -94,11 +94,11 @@ endfunction ()
 
 function (_gc_find_version HEADER_FILE MACRO_NAME)
   file (STRINGS "${HEADER_FILE}" _VERSION
-        REGEX "#define[\t ]+${MACRO_NAME}[t\ ]+[0-9]+")
+        REGEX "#define[\t ]+${MACRO_NAME}[\t ]+[0-9]+")
 
   if (_VERSION)
     string (REGEX REPLACE
-            ".*#define[\t ]+${MACRO_NAME}[t\ ]+([0-9]+).*"
+            ".*#define[\t ]+${MACRO_NAME}[\t ]+([0-9]+).*"
             "\\1" _VERSION_VALUE "${_VERSION}")
     if ("${_VERSION}" STREQUAL "${_VERSION_VALUE}")
       set (_VERSION_FOUND 0 PARENT_SCOPE)
