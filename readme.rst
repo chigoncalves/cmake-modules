@@ -21,10 +21,10 @@ A tiny collection of `cmake <http://cmake.org>`_ modules.
        finds RSVG.
 
 * ``FindSN``
-       finds startup notification..
+       finds startup notification.
 
 * ``FindImlib``
-       finds Imlib
+       finds Imlib.
 
 
 *********
@@ -32,4 +32,5 @@ A tiny collection of `cmake <http://cmake.org>`_ modules.
 *********
 
 These modules are released under ISC License, for more information
-read the file ``license.rst``.
+read the file `license.rst
+<https://github.com/chigoncalves/cmake-modules/blob/master/license.rst>`_.
