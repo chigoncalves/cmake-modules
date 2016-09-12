@@ -1,4 +1,35 @@
-###############################
-Wave's CMake modules collection
-###############################
-This repository contains a couple of CMake modules I wrote as needed them.
+###############
+ cmake-modules
+###############
+
+A tiny collection of `cmake <http://cmake.org>`_ modules.
+
+*********
+ Modules
+*********
+
+* ``FindGtk3``
+       finds Gtk+3.
+
+* ``FindGuile``
+       finds Guile 2.0.
+
+* ``FindCUnit``
+       finds CUnit.
+
+* ``FindRSVG``
+       finds RSVG.
+
+* ``FindSN``
+       finds startup notification..
+
+* ``FindImlib``
+       finds Imlib
+
+
+*********
+ License
+*********
+
+These modules are released under ISC License, for more information
+read the file ``license.rst``.

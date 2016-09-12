@@ -1,94 +1,108 @@
 #[[.rst FindGtk3.cmake
 
-FindGtk3
---------
+# FindGtk3
+# --------
+#
+# THIS MODULE TRIES TO FIND GTK+3 PACKAGE AND ITS COMPONENTS.
+#
+# USAGE
+# ^^^^^
+# .. CODE::
+#
+#    FIND_PACKAGE (GTK3)
+#
+# FINDGTK3 CAN FIND THESE GTK+3 COMPONENTS:
+#
+# * GTK3
+# * GDK3
+# * PANGOCAIRO
+# * PANGO
+# * ATK
+# * CAIROGOBJECT
+# * CAIRO
+# * GDKPIXBUF
+# * GIO
+# * GOBJECT
+# * GLIB
+#
+# NOTE THAT EACH COMPONENT BELOW HAS AS DEPENDENT THE COMPONENT ABOVE.
+# FOR INSTANCE:
+#
+#  .. CODE::
+#
+#     FIND_PACKAGE (GTK3 3.8 COMPONENTS GIO)
+#
+# WILL TRY TO FIND ONLY GLIB, GOBJECT AND GIO, WHICH MEANS THAT THE
+# INVOCATION BELOW HAS SAME EFFECT AS THE FORMER ONE.
+#
+# .. CODE::
+#
+#     FIND_PACKAGE (GTK3 3.8 COMPONENTS GIO GLIB GOBJECT)
+#
+# SINCE ``GIO`` DEPENDS ON ``GLIB``, WHICH IN TURN DEPENDS ON
+# ``GOBJECT``,
+#  THERE IS NO NEED TO PASSING THEM TO :COMMAND:`FIND_PACKAGE`\.
+#
+# IF YOU WANT TO FIND ``GTK3`` YOU DON'T NEED TO PASS ALL THE
+# COMPONENTS, I.E. THESE TO INVOCATION OF PACKAGE ARE IDENTICAL.
+#
+# .. CODE::
+#
+#    FIND_PACKAGE (GTK3 3.8 COMPONENTS GTK3 GDK3 PANGOCAIRO PANGO ATK
+#                                       CAIROGOBJECT CAIRO GDKPIXBUF
+#                                       GIO GOBJECT GLIB)
+#
+#    FIND_PACKAGE (GTK3 3.8 COMPONENTS GTK3)
+#
+#    # OR EVEN BETTER.
+#    FIND_PACKAGE (GTK3 3.8)
+#
+#
+# AS YOU CAN SEE THE LAST INVOCATION OF :COMMAND:`FIND_PACKAGE`
+# IS MORE SIMPLE.
+#
+# AFTER A SUCCESSFUL SEARCH THIS PACKAGE SETS THESE VARIABLES:
+#
+# .. VARIABLE:: GTK3_FOUND
+#
+#    WILL BE SET TO *TRUE* IF IT MANAGES TO FIND GTK+3.
+#
+# .. VARIABLE:: GTK3_INCLUDE_DIRS
+#
+#    WITH ALL INCLUDE LOCATION FOR THE COMPONENTS PASSED TO
+#    :COMMAND:``FIND_PACKAGE``\.
+#
+# .. VARIABLE:: GTK3_LIBRARIES
+#
+#   WITH ALL LIBRARIES OF THE COMPONENTS PASSED TO
+# :COMMAND:`FIND_PACKAGE``\.
+#
+#
+# #]]
 
-This module tries to find Gtk+3 package and its components.
 
-Usage
-^^^^^
-.. code::
-
-   find_package (Gtk3)
-
-FindGTK3 can find these Gtk+3 components:
-
-* Gtk3
-* Gdk3
-* PangoCairo
-* Pango
-* Atk
-* CairoGobject
-* Cairo
-* GdkPixbuf
-* GIO
-* Gobject
-* Glib
-
-Note that each component below has as dependent the component above.
-For instance:
-
- .. code::
-
-    find_package (Gtk3 3.8 COMPONENTS GIO)
-
-Will try to find only Glib, Gobject and GIO, which means that the
-invocation below has same effect as the former one.
-
-.. code::
-
-    find_package (Gtk3 3.8 COMPONENTS GIO Glib Gobject)
-
-Since ``GIO`` depends on ``Glib``, which in turn depends on
-``Gobject``,
- there is no need to passing them to :command:`find_package`\.
-
-If you want to find ``Gtk3`` you don't need to pass all the
-components, i.e. these to invocation of package are identical.
-
-.. code::
-
-   find_package (Gtk3 3.8 COMPONENTS Gtk3 Gdk3 PangoCairo Pango Atk
-                                      CairoGobject Cairo GdkPixbuf
-                                      GIO Gobject Glib)
-
-   find_package (Gtk3 3.8 COMPONENTS Gtk3)
-
-   # or even better.
-   find_package (Gtk3 3.8)
-
-
-As you can see the last invocation of :command:`find_package`
-is more simple.
-
-After a successful search this package sets these variables:
-
-.. variable:: Gtk3_FOUND
-
-   Will be set to *true* if it manages to find Gtk+3.
-
-.. variable:: Gtk3_INCLUDE_DIRS
-
-   With all include location for the components passed to
-   :command:``find_package``\.
-
-.. variable:: Gtk3_LIBRARIES
-
-   With all libraries of the components passed to
-:command:`find_package``\.
-
-
+#[[.RST
+#
+# COPYRIGHT © 2016, EDELCIDES GONÇALVES <EATG75 |0X40| GMAIL>
+#
+# PERMISSION TO USE, COPY, MODIFY, AND/OR DISTRIBUTE THIS SOFTWARE FOR
+# ANY PURPOSE WITH OR WITHOUT FEE IS HEREBY GRANTED, PROVIDED THAT THE
+# ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE APPEAR IN ALL
+# COPIES.
+#
+# *THE SOFTWARE IS PROVIDED* **AS IS** *AND ISC DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL ISC BE
+# LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+# PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+# TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE*.
+#
+# THIS FILE IS NOT PART OF CMAKE
+#
 #]]
 
-
-#=======================================================================
-# Copyright E. Gonçalves.
-#
-# Version 0.0.3
-#=======================================================================
-
-
-# Ver a implentação no FindPkgConfig.cmake, CMakePackageConfigHelpers.cmake
 
 include (SelectLibraryConfigurations)
 include(FindPackageHandleStandardArgs)

@@ -1,72 +1,87 @@
 #[[.rst
-
-FindGuile
----------
-Find the development libraries for Guile.
-
-Exported Vars
-~~~~~~~~~~~~~
-
-.. variable:: Guile_FOUND
-
-   Set to *true* if Guile was found.
-
-.. variable:: Guile_INCLUDE_DIRS
-
-   A list of include directories.
-
-.. variable:: Guile_LIBRARIES
-
-   A list of libraries needed to build you project.
-
-.. variable:: Guile_VERSION_STRING
-
-   Guile full version.
-
-.. variable:: Guile_VERSION_MAJOR
-
-   Guile major version.
-
-.. variable:: Guile_VERSION_MINOR
-
-   Guile minor version.
-
-.. variable:: Guile_VERSION_PATCH
-
-   Guile patch version.
-
-.. variable:: Guile_EXECUTABLE
-
-   Guile executable (optional).
-
-Control VARS
-~~~~~~~~~~~~
-:envvar:`Guile_ROOT_DIR`
-
-  Use this variable to provide hints to :filename:`find_{*}` commands,
-  you may pass it to :command:`cmake` or set the environtment variable.
-
-.. code-block:: cmake
-
-   % cmake . -Bbuild -DGuile_ROOT_DIR=<extra-path>
-
-   # or
-   % export Guile_ROOT_DIR=<extra-path>;
-   % cmake . -Bbuild
-
-   # or
-   % Guile_ROOT_DIR=<extra-path> cmake . -Bbuild
-
-
+#
+# FindGuile
+# ---------
+# Find the development libraries for Guile.
+#
+# Exported Vars
+# ~~~~~~~~~~~~~
+#
+# .. variable:: Guile_FOUND
+#
+#    Set to *true* if Guile was found.
+#
+# .. variable:: Guile_INCLUDE_DIRS
+#
+#    A list of include directories.
+#
+# .. variable:: Guile_LIBRARIES
+#
+#    A list of libraries needed to build you project.
+#
+# .. variable:: Guile_VERSION_STRING
+#
+#    Guile full version.
+#
+# .. variable:: Guile_VERSION_MAJOR
+#
+#    Guile major version.
+#
+# .. variable:: Guile_VERSION_MINOR
+#
+#    Guile minor version.
+#
+# .. variable:: Guile_VERSION_PATCH
+#
+#    Guile patch version.
+#
+# .. variable:: Guile_EXECUTABLE
+#
+#    Guile executable (optional).
+#
+# Control VARS
+# ~~~~~~~~~~~~
+# :envvar:`Guile_ROOT_DIR`
+#
+#   Use this variable to provide hints to :filename:`find_{*}` commands,
+#   you may pass it to :command:`cmake` or set the environtment variable.
+#
+# .. code-block:: cmake
+#
+#    % cmake . -Bbuild -DGuile_ROOT_DIR=<extra-path>
+#
+#    # or
+#    % export Guile_ROOT_DIR=<extra-path>;
+#    % cmake . -Bbuild
+#
+#    # or
+#    % Guile_ROOT_DIR=<extra-path> cmake . -Bbuild
+#
+#
 #]]
 
 
-#=====================================================================
-# Copyright 2016 chigoncalves <Edelcides Gonçalves>
+#[[.rst
+#
+# Copyright © 2016, Edelcides Gonçalves <eatg75 |0x40| gmail>
+#
+# Permission to use, copy, modify, and/or distribute this software for
+# any purpose with or without fee is hereby granted, provided that the
+# above copyright notice and this permission notice appear in all
+# copies.
+#
+# *THE SOFTWARE IS PROVIDED* **AS IS** *AND ISC DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL ISC BE
+# LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+# PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+# TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE*.
 #
 # This file is not part of CMake
 #
-#=====================================================================
+#]]
 
 
 include (SelectLibraryConfigurations)
