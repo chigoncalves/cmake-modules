@@ -26,6 +26,9 @@ A tiny collection of `cmake <http://cmake.org>`_ modules.
 * ``FindImlib``
        finds Imlib.
 
+* ``FindGC``
+       finds Boehm garbage collector.
+
 
 *********
  License
