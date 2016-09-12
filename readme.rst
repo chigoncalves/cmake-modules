@@ -29,6 +29,9 @@ A tiny collection of `cmake <http://cmake.org>`_ modules.
 * ``FindGC``
        finds Boehm garbage collector.
 
+* ``FindReadline``
+       finds Readline.
+
 
 *********
  License
