@@ -46,12 +46,27 @@ function (_rsvg_find_component_include_dir component_name header)
   find_path (${component_name}_INCLUDE_DIR
              ${header}
 	     PATH_SUFFIXES
-	       cairo Cairo glib Glib glib-2.0  Glib-2.0 glib/gobject
-	       Glib/gobject glib-2.0/gobject Glib-2.0/gobject gdk-pixbuf
-	       gdk-pixbuf-2.0 gdk-pixbuf-2.0/gdk-pixbuf
-	       glib Glib/gio glib-2.0/gio  Glib-2.0/gio
-	       rsvg-2/librsvg rsvg-2.0/librsvg librsvg-2/librsvg
-	       librsvg-2.0/librsvg)
+	       cairo
+	       Cairo
+	       glib
+	       Glib
+	       glib-2.0
+	       Glib-2.0
+	       glib/gobject
+	       Glib/gobject
+	       glib-2.0/gobject
+	       Glib-2.0/gobject
+	       gdk-pixbuf
+	       gdk-pixbuf-2.0
+	       gdk-pixbuf-2.0/gdk-pixbuf
+	       glib
+	       Glib/gio
+	       glib-2.0/gio
+	       Glib-2.0/gio
+	       rsvg-2
+	       rsvg-2.0
+	       librsvg-2
+	       librsvg-2.0)
 
   if (${component_name}_INCLUDE_DIR)
     set (${component_name}_INCLUDE_DIR
@@ -207,7 +222,7 @@ foreach (LIBRARY ${_LIBRARIES})
 endforeach ()
 unset (LIBRARY_NAME_SANS_PREFIX)
 
-_rsvg_find_component_include_dir (RSVG rsvg.h)
+_rsvg_find_component_include_dir (RSVG librsvg/rsvg.h)
 _rsvg_find_component_library (RSVG rsvg)
 
 _rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
