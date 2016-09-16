@@ -20,6 +20,10 @@ try_compile (Gtk3_SUCCESS ${PROJECT_BINARY_DIR}/t/gtk+3
              ${TEST_DIRECTORY}/gtk+3 gtk+3
 	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
 
+try_compile (Imlib2_SUCCESS ${PROJECT_BINARY_DIR}/t/imlib2
+             ${TEST_DIRECTORY}/imlib2 imlib2
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
+
 if (Guile_SUCCESS)
   message (STATUS "cmake-modules: Guile test passed!")
 else ()
@@ -30,4 +34,10 @@ if (Gtk3_SUCCESS)
   message (STATUS "cmake-modules: Gtk3 test passed!")
 else ()
   message (WARNING "cmake-modules: Gtk3 test failed!")
+endif ()
+
+if (Imlib2_SUCCESS)
+  message (STATUS "cmake-modules: Imlib2 test passed!")
+else ()
+  message (WARNING "cmake-modules: Imlib2 test failed!")
 endif ()
