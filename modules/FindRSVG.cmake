@@ -45,22 +45,20 @@ include (FindPackageHandleStandardArgs)
 function (_rsvg_find_component_include_dir component_name header)
   find_path (${component_name}_INCLUDE_DIR
              ${header}
+	     PATHS
+	       /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/glib-2.0/include
+	       /usr/lib64/${CMAKE_LIBRARY_ARCHITECTURE}/glib-2.0/include
 	     PATH_SUFFIXES
 	       cairo
 	       Cairo
-	       glib
-	       Glib
 	       glib-2.0
 	       Glib-2.0
 	       glib/gobject
 	       Glib/gobject
 	       glib-2.0/gobject
 	       Glib-2.0/gobject
-	       gdk-pixbuf
+	       gdk-pixbuf-2
 	       gdk-pixbuf-2.0
-	       gdk-pixbuf-2.0/gdk-pixbuf
-	       glib
-	       Glib/gio
 	       glib-2.0/gio
 	       Glib-2.0/gio
 	       rsvg-2
@@ -190,15 +188,19 @@ foreach (LIBRARY ${_LIBRARIES})
     set (_LIBRARY_DEPENDENCIES)
     set (_LIBRARY_NAME cairo)
   elseif (${LIBRARY} STREQUAL RSVG_Glib)
+    _rsvg_find_component_include_dir (GlibConfig glibconfig.h)
+    find_package_handle_standard_args (GlibConfig
+                                       DEFAULT_MESSAGE
+				       GlibConfig_INCLUDE_DIR)
     set (_LIBRARY_HEADER glib.h)
-    set (_LIBRARY_DEPENDENCIES)
+    set (_LIBRARY_DEPENDENCIES GlibConfig_FOUND)
     set (_LIBRARY_NAME glib)
   elseif (${LIBRARY} STREQUAL RSVG_Gobject)
     set (_LIBRARY_HEADER gobject.h)
     set (_LIBRARY_DEPENDENCIES Glib_FOUND)
     set (_LIBRARY_NAME gobject)
   elseif (${LIBRARY} STREQUAL RSVG_GdkPixbuf)
-    set (_LIBRARY_HEADER gdk-pixbuf.h)
+    set (_LIBRARY_HEADER gdk-pixbuf/gdk-pixbuf.h)
     set (_LIBRARY_NAME gdk-pixbuf)
     set (_LIBRARY_DEPENDENCIES Glib_FOUND Gobject_FOUND)
   elseif (${LIBRARY} STREQUAL RSVG_GIO)
@@ -224,20 +226,19 @@ unset (LIBRARY_NAME_SANS_PREFIX)
 
 _rsvg_find_component_include_dir (RSVG librsvg/rsvg.h)
 _rsvg_find_component_library (RSVG rsvg)
-
-_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg/librsvg-features.h"
                     "LIBRSVG_MAJOR_VERSION")
 if (VERSION_FOUND)
   set (RSVG_VERSION_MAJOR ${VERSION})
 endif ()
 
-_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg/librsvg-features.h"
                     "LIBRSVG_MINOR_VERSION")
 if (VERSION_FOUND)
   set (RSVG_VERSION_MINOR ${VERSION})
 endif ()
 
-_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg-features.h"
+_rsvg_find_version ("${RSVG_INCLUDE_DIR}/librsvg/librsvg-features.h"
                     "LIBRSVG_MICRO_VERSION")
 if (VERSION_FOUND)
   set (RSVG_VERSION_PATCH ${VERSION})
@@ -263,6 +264,7 @@ if (RSVG_FOUND)
              RSVG_GIO RSVG_Math RSVG)
   set (_LIB_DEPENDENCIES)
   set (RSVG_LIBRARIES)
+  list (APPEND RSVG_INCLUDE_DIRS ${GlibConfig_INCLUDE_DIR})
   foreach (LIB ${_LIBS})
     # Piggy backing on this loop.
     list (APPEND RSVG_INCLUDE_DIRS "${${LIB}_INCLUDE_DIR}")
