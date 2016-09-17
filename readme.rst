@@ -2,7 +2,7 @@
  cmake-modules
 ###############
 
-A tiny collection of `cmake <http://cmake.org>`_ modules.
+A tiny collection of `CMake <http://cmake.org>`_ modules.
 
 *********
  Modules
@@ -38,5 +38,4 @@ A tiny collection of `cmake <http://cmake.org>`_ modules.
 *********
 
 These modules are released under ISC License, for more information
-read the file `license.rst
-<https://github.com/chigoncalves/cmake-modules/blob/master/license.rst>`_.
+see file ``license.rst``.

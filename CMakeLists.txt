@@ -24,6 +24,10 @@ try_compile (Imlib2_SUCCESS ${PROJECT_BINARY_DIR}/t/imlib2
              ${TEST_DIRECTORY}/imlib2 imlib2
 	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
 
+try_compile (CUnit_SUCCESS ${PROJECT_BINARY_DIR}/t/cunit
+             ${TEST_DIRECTORY}/cunit cunit
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
+
 if (Guile_SUCCESS)
   message (STATUS "cmake-modules: Guile test passed!")
 else ()
@@ -40,4 +44,10 @@ if (Imlib2_SUCCESS)
   message (STATUS "cmake-modules: Imlib2 test passed!")
 else ()
   message (WARNING "cmake-modules: Imlib2 test failed!")
+endif ()
+
+if (CUnit_SUCCESS)
+  message (STATUS "cmake-modules: CUnit test passed!")
+else ()
+  message (WARNING "cmake-modules: CUnit test failed!")
 endif ()
