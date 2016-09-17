@@ -28,6 +28,11 @@ try_compile (CUnit_SUCCESS ${PROJECT_BINARY_DIR}/t/cunit
              ${TEST_DIRECTORY}/cunit cunit
 	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
 
+try_compile (Readline_SUCCESS ${PROJECT_BINARY_DIR}/t/readline
+             ${TEST_DIRECTORY}/readline readline
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
+
+
 if (Guile_SUCCESS)
   message (STATUS "cmake-modules: Guile test passed!")
 else ()
@@ -46,8 +51,8 @@ else ()
   message (WARNING "cmake-modules: Imlib2 test failed!")
 endif ()
 
-if (CUnit_SUCCESS)
-  message (STATUS "cmake-modules: CUnit test passed!")
+if (Readline_SUCCESS)
+  message (STATUS "cmake-modules: Readline test passed!")
 else ()
-  message (WARNING "cmake-modules: CUnit test failed!")
+  message (WARNING "cmake-modules: Readline test failed!")
 endif ()

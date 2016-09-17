@@ -7,10 +7,10 @@ endif ()
 cmake_minimum_required (VERSION 3.0)
 cmake_policy (SET CMP0054 NEW)
 
-project (cunit LANGUAGES C)
+project (readline LANGUAGES C)
 
-find_package (CUnit QUIET)
+find_package (Readline QUIET)
 
-add_executable (cunit cunit.c)
-target_include_directories (cunit PUBLIC ${CUnit_INCLUDE_DIRS})
-target_link_libraries (cunit PUBLIC ${CUnit_LIBRARIES})
+add_executable (readline main.c)
+target_include_directories (readline PUBLIC ${Readline_INCLUDE_DIRS})
+target_link_libraries (readline PUBLIC ${Readline_LIBRARIES})
