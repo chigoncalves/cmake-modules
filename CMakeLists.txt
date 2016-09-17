@@ -32,6 +32,17 @@ try_compile (Readline_SUCCESS ${PROJECT_BINARY_DIR}/t/readline
              ${TEST_DIRECTORY}/readline readline
 	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
 
+try_compile (SN_SUCCESS ${PROJECT_BINARY_DIR}/t/sn
+             ${TEST_DIRECTORY}/sn sn
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
+
+try_compile (GC_SUCCESS ${PROJECT_BINARY_DIR}/t/gc
+             ${TEST_DIRECTORY}/gc gc
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
+
+try_compile (RSVG_SUCCESS ${PROJECT_BINARY_DIR}/t/rsvg
+             ${TEST_DIRECTORY}/rsvg rsvg
+	     CMAKE_FLAGS -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH})
 
 if (Guile_SUCCESS)
   message (STATUS "cmake-modules: Guile test passed!")
@@ -55,4 +66,22 @@ if (Readline_SUCCESS)
   message (STATUS "cmake-modules: Readline test passed!")
 else ()
   message (WARNING "cmake-modules: Readline test failed!")
+endif ()
+
+if (SN_SUCCESS)
+  message (STATUS "cmake-modules: SN test passed!")
+else ()
+  message (WARNING "cmake-modules: SN test failed!")
+endif ()
+
+if (GC_SUCCESS)
+  message (STATUS "cmake-modules: GC test passed!")
+else ()
+  message (WARNING "cmake-modules: GC test failed!")
+endif ()
+
+if (RSVG_SUCCESS)
+  message (STATUS "cmake-modules: RSVG test passed!")
+else ()
+  message (WARNING "cmake-modules: RSVG test failed!")
 endif ()
